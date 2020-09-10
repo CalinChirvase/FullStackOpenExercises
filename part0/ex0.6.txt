@@ -1,0 +1,6 @@
+note over browser:
+Event handler creates a new note and rerenders the note list on the page.
+end note
+
+Browser->Server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+Server->Browser: Status Code 201
