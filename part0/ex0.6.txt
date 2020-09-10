@@ -1,6 +1,12 @@
-note over browser:
-Event handler creates a new note and rerenders the note list on the page.
+#diagram made with https://www.websequencediagrams.com
+
+note over Browser:
+User creates a new note
 end note
 
 Browser->Server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
 Server->Browser: Status Code 201
+
+note over Browser:
+Browser executes event handler and renders notes
+end note
