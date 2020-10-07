@@ -1,9 +1,9 @@
 import React from 'react'
 
-const Contact = ({ name, number }) => {
+const Contact = ({ name, number , deleteContact}) => {
     return (
       <div>
-        <p>{name} {number}</p>
+        <p>{name} {number} <button type="submit" onClick={deleteContact}> delete </button></p>
       </div>
     )
   }
