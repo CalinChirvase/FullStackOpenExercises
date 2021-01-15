@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import Phonebook from './components/Phonebook'
 import ContactForm from './components/ContactForm'
-import axios from 'axios'
 import { useEffect } from 'react'
 import contactService from './services/contacts'
 import Notification from './components/Notification'
