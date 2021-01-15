@@ -47,34 +47,36 @@ const App = () => {
 
     const matches = persons.filter(person => person.name === newName)
     if (matches.length !== 0){
-      window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)
+      const result = window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)
       setNewName('')
       setNewNumber('')
+      
+      if (result){
+        const id = matches[0].id
 
-      const id = matches[0].id
+        const newContact = {
+          name: newName,
+          number: newNumber,
+          id: id
+        }
+        contactService
+        .update(id, newContact)
+        .then(response => {
+          const updatedList = persons.filter(person => person.id !== id)
+          setPersons(updatedList.concat(newContact))
+        })
+        .catch(error => {
+          setNotification(`${newName}'s phone number was already deleted.`)
+          setPersons(persons.filter(person => person.id !== id))
+        }
 
-      const newContact = {
-        name: newName,
-        number: newNumber,
-        id: id
+        )
+        setNotification(`${newName}'s phone number was succsesfully updated.`)
+        setTimeout(() => setNotification(null), 4000)
+        setNewName('')
+        setNewNumber('')
+        return
       }
-      contactService
-      .update(id, newContact)
-      .then(response => {
-        const updatedList = persons.filter(person => person.id !== id)
-        setPersons(updatedList.concat(newContact))
-      })
-      .catch(error => {
-        setNotification(`${newName}'s phone number was already deleted.`)
-        setPersons(persons.filter(person => person.id !== id))
-      }
-
-      )
-      setNotification(`${newName}'s phone number was succsesfully updated.`)
-      setTimeout(() => setNotification(null), 4000)
-      setNewName('')
-      setNewNumber('')
-      return
     }
 
     const newContact = {
