@@ -50,6 +50,7 @@ const App = () => {
 
   const handleLogout = (event) => {
     window.localStorage.removeItem('loggedBlogappUser')
+    setUser(null)
   }
 
   const loginForm = () => (
@@ -99,6 +100,7 @@ const App = () => {
       loginForm() :
       <div>
         <p>{user.name} logged-in</p>
+        <button onClick={handleLogout}>logout</button>
         {blogForm()}
       </div>
       }
