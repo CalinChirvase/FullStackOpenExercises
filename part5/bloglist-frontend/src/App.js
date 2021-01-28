@@ -7,6 +7,9 @@ const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setURL] = useState('')
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState('')
 
@@ -53,6 +56,25 @@ const App = () => {
     setUser(null)
   }
 
+  const handleCreateBlog = async (event) => {
+    event.preventDefault()
+    try {
+      const blog = await blogService.create({
+        title, author, url
+      })
+
+      setTitle('')
+      setAuthor('')
+      setURL('')
+
+    } catch (exception) {
+      setErrorMessage('Failed to create new blog')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    }
+  }
+
   const loginForm = () => (
     <div>
       <h2>Log in to application</h2>
@@ -82,6 +104,37 @@ const App = () => {
 
   const blogForm = () => (
     <div>
+      <h2>create new blog</h2>
+      <form onSubmit={handleCreateBlog}>
+        <div>
+          title
+          <input
+          type="text"
+          value={title}
+          name="Title"
+          onChange={({ target }) => setTitle(target.value)}
+          />
+        </div>
+        <div>
+          author
+          <input
+          type="text"
+          value={author}
+          name="Author"
+          onChange={({ target }) => setAuthor(target.value)}
+          />
+        </div>
+        <div>
+          url
+          <input
+          type="text"
+          value={url}
+          name="URL"
+          onChange={({ target }) => setURL(target.value)}
+          />
+        </div>
+        <button type="submit">create</button>
+      </form>
       <h2>blogs</h2>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
