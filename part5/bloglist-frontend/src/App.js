@@ -1,21 +1,25 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
+import LoginForm from './components/LoginForm'
+import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import BlogForm from './components/BlogForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setURL] = useState('')
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState('')
 
+  const blogFormRef = useRef()
+
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
+    blogService
+      .getAll()
+      .then(blogs =>
+        setBlogs(blogs)
     )  
   }, [])
 
@@ -51,21 +55,42 @@ const App = () => {
     }
   }
 
+  const loginForm = () => {
+
+    return (
+      <Togglable buttonLabel='login'>
+        <LoginForm
+          username={username}
+          password={password}
+          handleUsernameChange={({ target }) => setUsername(target.value)}
+          handlePasswordChange={({ target }) => setPassword(target.value)}
+          handleSubmit={handleLogin}
+        />
+      </Togglable>
+    )
+  }
   const handleLogout = (event) => {
     window.localStorage.removeItem('loggedBlogappUser')
     setUser(null)
   }
 
-  const handleCreateBlog = async (event) => {
-    event.preventDefault()
-    try {
-      const blog = await blogService.create({
-        title, author, url
+  const likeBlog = (blogID, newBlog) => {
+    blogService
+      .update(blogID, newBlog)
+      .then(blogs => {
+        setBlogs(blogs)
       })
 
-      setTitle('')
-      setAuthor('')
-      setURL('')
+  }
+
+  const handleCreateBlog = (blog) => {
+    try {
+      blogFormRef.current.toggleVisibility()
+      blogService
+      .create(blog)
+      .then(returnedBlog => {
+        setBlogs(blogs.concat(returnedBlog))
+      })
 
     } catch (exception) {
       setErrorMessage('Failed to create new blog')
@@ -75,72 +100,20 @@ const App = () => {
     }
   }
 
-  const loginForm = () => (
-    <div>
-      <h2>Log in to application</h2>
-      <form onSubmit={handleLogin}>
-        <div>
-          username
-            <input
-            type="text"
-            value={username}
-            name="Username"
-            onChange={({ target }) => setUsername(target.value)}
-          />
-        </div>
-        <div>
-          password
-            <input
-            type="password"
-            value={password}
-            name="Password"
-            onChange={({ target }) => setPassword(target.value)}
-          />
-        </div>
-        <button type="submit">login</button>
-      </form>
-    </div>      
-  )
-
-  const blogForm = () => (
-    <div>
-      <h2>create new blog</h2>
-      <form onSubmit={handleCreateBlog}>
-        <div>
-          title
-          <input
-          type="text"
-          value={title}
-          name="Title"
-          onChange={({ target }) => setTitle(target.value)}
-          />
-        </div>
-        <div>
-          author
-          <input
-          type="text"
-          value={author}
-          name="Author"
-          onChange={({ target }) => setAuthor(target.value)}
-          />
-        </div>
-        <div>
-          url
-          <input
-          type="text"
-          value={url}
-          name="URL"
-          onChange={({ target }) => setURL(target.value)}
-          />
-        </div>
-        <button type="submit">create</button>
-      </form>
+  const blogForm = () => {
+    return (
+      <div>
       <h2>blogs</h2>
+      <Togglable buttonLabel="new blog" ref={blogFormRef}>
+        <BlogForm handleCreateBlog={handleCreateBlog}/>
+      </Togglable>
+      <br />
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} likeBlog={likeBlog}/>
       )}
-    </div>
-  )
+      </div>
+    )
+  }
 
   //      <Notification message={errorMessage} />
 
