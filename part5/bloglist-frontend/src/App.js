@@ -20,7 +20,7 @@ const App = () => {
       .getAll()
       .then(blogs =>
         setBlogs(blogs)
-    )  
+      )
   }, [])
 
   useEffect(() => {
@@ -69,7 +69,7 @@ const App = () => {
       </Togglable>
     )
   }
-  const handleLogout = (event) => {
+  const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogappUser')
     setUser(null)
   }
@@ -87,10 +87,10 @@ const App = () => {
     try {
       blogFormRef.current.toggleVisibility()
       blogService
-      .create(blog)
-      .then(returnedBlog => {
-        setBlogs(blogs.concat(returnedBlog))
-      })
+        .create(blog)
+        .then(returnedBlog => {
+          setBlogs(blogs.concat(returnedBlog))
+        })
 
     } catch (exception) {
       setErrorMessage('Failed to create new blog')
@@ -103,14 +103,14 @@ const App = () => {
   const blogForm = () => {
     return (
       <div>
-      <h2>blogs</h2>
-      <Togglable buttonLabel="new blog" ref={blogFormRef}>
-        <BlogForm handleCreateBlog={handleCreateBlog}/>
-      </Togglable>
-      <br />
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} likeBlog={likeBlog}/>
-      )}
+        <h2>blogs</h2>
+        <Togglable buttonLabel="new blog" ref={blogFormRef}>
+          <BlogForm handleCreateBlog={handleCreateBlog}/>
+        </Togglable>
+        <br />
+        {blogs.map(blog =>
+          <Blog key={blog.id} blog={blog} likeBlog={likeBlog}/>
+        )}
       </div>
     )
   }
@@ -123,12 +123,12 @@ const App = () => {
       <h1>Notes</h1>
 
       {user === null ?
-      loginForm() :
-      <div>
-        <p>{user.name} logged-in</p>
-        <button onClick={handleLogout}>logout</button>
-        {blogForm()}
-      </div>
+        loginForm() :
+        <div>
+          <p>{user.name} logged-in</p>
+          <button onClick={handleLogout}>logout</button>
+          {blogForm()}
+        </div>
       }
 
     </div>
