@@ -74,15 +74,6 @@ const App = () => {
     setUser(null)
   }
 
-  const likeBlog = (blogID, newBlog) => {
-    blogService
-      .update(blogID, newBlog)
-      .then(blogs => {
-        setBlogs(blogs)
-      })
-
-  }
-
   const handleCreateBlog = (blog) => {
     try {
       blogFormRef.current.toggleVisibility()
@@ -109,7 +100,7 @@ const App = () => {
         </Togglable>
         <br />
         {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} likeBlog={likeBlog}/>
+          <Blog key={blog.id} blog={blog} setBlogs={setBlogs}/>
         )}
       </div>
     )
@@ -120,13 +111,13 @@ const App = () => {
   return (
     <div>
       <div>{errorMessage}</div>
-      <h1>Notes</h1>
+      <h1>Blogs</h1>
 
       {user === null ?
         loginForm() :
         <div>
           <p>{user.name} logged-in</p>
-          <button onClick={handleLogout}>logout</button>
+          <button id='logout-button' onClick={handleLogout}>logout</button>
           {blogForm()}
         </div>
       }
