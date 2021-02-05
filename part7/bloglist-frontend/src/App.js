@@ -1,14 +1,29 @@
 import React, { useState, useEffect, useRef } from 'react'
+
+//import components
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
+import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
+import UserList from './components/UserList'
+import NavigationBar from './components/NavigationBar'
+import UserView from './components/UserView'
+
+//import services
 import blogService from './services/blogs'
 import loginService from './services/login'
-import BlogForm from './components/BlogForm'
-import { Table, Button, Alert, Navbar } from 'react-bootstrap'
+import userService from './services/users'
+
+
+import { Table,  Alert } from 'react-bootstrap'
+import {
+  BrowserRouter as Router,
+  Switch, Route
+} from 'react-router-dom'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
+  const [users, setUsers] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -17,11 +32,21 @@ const App = () => {
 
   const blogFormRef = useRef()
 
+  //get all blogs
   useEffect(() => {
     blogService
       .getAll()
       .then(blogs =>
         setBlogs(blogs)
+      )
+  }, [])
+
+  //get all users
+  useEffect(() => {
+    userService
+      .getAll()
+      .then(users =>
+        setUsers(users)
       )
   }, [])
 
@@ -116,29 +141,36 @@ const App = () => {
     )
   }
 
-  //      <Notification message={errorMessage} />
-
   return (
     <div className="container">
-      {(message &&
-        <Alert variant="success" dismissible>
-          {message}
-        </Alert>)}
-      <div>{errorMessage}</div>
+      <Router>
+        {(message &&
+          <Alert variant="success" dismissible>
+            {message}
+          </Alert>)}
+        <div>{errorMessage}</div>
 
-      {user === null ?
-        loginForm() :
-        <div>
-          <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
-            <Navbar.Brand>Blogs</Navbar.Brand>
-          </Navbar>
-          {blogForm()}
-          <br />
-          <p>{user.name} logged-in</p>
-          <Button variant="primary" id='logout-button' onClick={handleLogout}>logout</Button>
-        </div>
-      }
-
+        {user === null ?
+          loginForm() :
+          <div>
+            <NavigationBar user={user} handleLogout={handleLogout}/>
+            <Switch>
+              <Route path="/users/:id">
+                <UserView user={user} setBlogs={setBlogs}/>
+              </Route>
+              <Route path="/users">
+                <UserList users={users}/>
+              </Route>
+              <Route path="/blogs">
+                {blogForm()}
+              </Route>
+              <Route path="/">
+                Welcome!
+              </Route>
+            </Switch>
+          </div>
+        }
+      </Router>
     </div>
   )
 }

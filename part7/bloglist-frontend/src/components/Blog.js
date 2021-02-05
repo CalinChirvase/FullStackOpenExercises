@@ -31,9 +31,9 @@ const Blog = ({ blog, setBlogs }) => {
           <div>
             URL: {blog.url}
             <br/>
-            Likes: {blog.likes} <Button variant="info" size="sm" onClick={likeBlog}>like</Button>
+            {blog.likes} likes <Button variant="info" size="sm" onClick={likeBlog}>like</Button>
             <br />
-            Shared by {blog.user.username}
+            Posted by {blog.user.username}
           </div> :
           ''}
       </td>
