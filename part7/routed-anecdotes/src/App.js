@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
 import { Switch, Route, Link, useRouteMatch, useHistory } from "react-router-dom"
+import { useField } from './hooks/index'
 
 const Anecdote = ({ anecdote }) => {
   return (
     <div>
     <h2>{anecdote.content} by {anecdote.author}</h2>
     <p>has {anecdote.votes} votes</p>
+    <p>for more info see <a href={anecdote.info}>{anecdote.info}</a></p>
     </div>
   )
 }
@@ -55,19 +57,18 @@ const Footer = () => (
 )
 
 const CreateNew = (props) => {
-  const [content, setContent] = useState('')
-  const [author, setAuthor] = useState('')
-  const [info, setInfo] = useState('')
 
+  const content = useField('text')
+  const author = useField('text')
+  const info = useField('text')
   const history = useHistory()
-
 
   const handleSubmit = (e) => {
     e.preventDefault()
     props.addNew({
-      content,
-      author,
-      info,
+      content: content.value,
+      author: author.value,
+      info: info.value,
       votes: 0
     })
     props.setNotification(`a new anecdote ${content} created!`)
@@ -75,24 +76,38 @@ const CreateNew = (props) => {
     history.push('/')
   }
 
+  const resetAll = () => {
+    content.reset()
+    author.reset()
+    info.reset()
+  }
+
+  const removeReset = (obj) => {
+    const {reset, ...rest} = obj
+
+    return rest
+  }
+
+
   return (
     <div>
       <h2>create a new anecdote</h2>
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input name='content' value={content} onChange={(e) => setContent(e.target.value)} />
+          <input {...removeReset(content)} />
         </div>
         <div>
           author
-          <input name='author' value={author} onChange={(e) => setAuthor(e.target.value)} />
+          <input {...removeReset(author)} />
         </div>
         <div>
           url for more info
-          <input name='info' value={info} onChange={(e)=> setInfo(e.target.value)} />
+          <input {...removeReset(info)} />
         </div>
         <button>create</button>
       </form>
+      <button onClick={resetAll}>reset</button>
     </div>
   )
 
