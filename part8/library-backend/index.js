@@ -97,8 +97,21 @@ let authors = [
     type Query {
         bookCount: Int!
         authorCount: Int!
-        allBooks: [Book]!
+        allBooks(author: String, genre: String): [Book]!
         allAuthors: [Author]!
+    }
+
+    type Mutation {
+        addBook(
+            title: String!
+            published: Int!
+            author: String!
+            genres: [String!]!
+        ): Book
+        editAuthor(
+            name: String!
+            setBornTo: Int!
+        ): Author
     }
   `
   
@@ -106,12 +119,45 @@ let authors = [
     Query: {
         authorCount: () => authors.length,
         bookCount: () => books.length,
-        allBooks: () => books,
+        allBooks: (root, args) => 
+            args.author ? 
+            books.filter(book => book.author === args.author) 
+            : args.genre ?
+            books.filter(book => book.genres.includes(args.genre))
+            : books,
         allAuthors: () => authors
     },
     Author: {
-        bookCount: (root) => {
-            return books.filter(book => book.author === root.name).length
+        bookCount: (root) => books.filter(book => book.author === root.name).length
+    },
+    Mutation: {
+        addBook: (root, args) => {
+            //check if book is already in database
+            if (books.find(book => book.title === args.title)) {
+                throw new UserInputError('Book title must be unique', {
+                    invalidArgs: args.title
+                })
+            }
+
+            //check if author is already in database
+            if (authors.filter(author => author.name === args.author).length === 0) {
+                authors = authors.concat({ name: args.author, id: uuid.v4()})
+            }
+
+            //add book to database
+            const newBook = {...args}
+            books = books.concat(newBook)
+            return newBook
+        },
+        editAuthor: (root, args) => {
+            const author = authors.find(a => a.name === args.name)
+            if (!author) {
+                return null
+            }
+
+            const updatedAuthor = {...args, born: args.setBornTo}
+            authors = authors.map(a => a.name === args.name ? updatedAuthor: a)
+            return updatedAuthor
         }
     }
   }
