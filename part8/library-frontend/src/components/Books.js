@@ -1,6 +1,11 @@
 import React from 'react'
+import { useQuery } from '@apollo/client'
+import { ALL_BOOKS } from '../queries'
 
-const Books = ({ show, booksResult}) => {
+const Books = ({ show }) => {
+  
+  const booksResult = useQuery(ALL_BOOKS)
+
   if (!show) {
     return null
   }
