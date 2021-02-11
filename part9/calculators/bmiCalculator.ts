@@ -10,11 +10,17 @@ const calculateBmi = (height: number, mass: number): BMI => {
         return 'Over';
     } else if (bmi > 30) {
         return 'Obese';
+    } else{
+        throw Error('bmi is invalid in calculateBmi');
     }
-}
+};
 
+export default calculateBmi;
+
+/*
 if (process.argv.length !== 4) {
     throw Error('call calculateBmi with two parameters, height in cm and mass in kg')
 }
 
 console.log(calculateBmi(parseInt(process.argv[2]), parseInt(process.argv[3])));
+*/

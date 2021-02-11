@@ -6,7 +6,7 @@ interface Result {
     ratingDescription: string,
     target: number,
     average: number
-};
+}
 
 const giveRating = (average: number, target: number) : number => {
     if (average <= target * 0.5) {
@@ -20,7 +20,7 @@ const giveRating = (average: number, target: number) : number => {
     } else {
         return 5;
     }
-}
+};
 const getRatingDescription = (rating: number): string => {
     switch(rating) {
         case 1:
@@ -36,24 +36,28 @@ const getRatingDescription = (rating: number): string => {
         default:
             throw new Error('getRatingDescription received improper argument!');
     }
-}
-const calculateExercise = (trainingSchedule: Array<number>, target: number): Result => {
-    const average: number = trainingSchedule.reduce((a, b) => a + b, 0) / trainingSchedule.length;
+};
+const calculateExercise = (daily_exercises: Array<number>, target: number): Result => {
+    const average: number = daily_exercises.reduce((a, b) => a + b, 0) / daily_exercises.length;
     const rating: number = giveRating(average, target);
     return {
-        periodLength: trainingSchedule.length,
-        trainingDays: trainingSchedule.filter(hours => hours !== 0).length,
+        periodLength: daily_exercises.length,
+        trainingDays: daily_exercises.filter(hours => hours !== 0).length,
         success: average >= target,
         rating: rating,
         ratingDescription: getRatingDescription(rating),
         target: target,
         average: average
     };
-}
+};
 
+export default calculateExercise;
+
+/*
 if (process.argv.length !== 4) {
     throw Error('call calculateExercise with two parameters, list of daily hours exercised(list of numbers must not contain spaces) and target hours')
 }
-//convert user inputed string into a list of numbers
+convert user inputed string into a list of numbers
 const listInputToNumbers: Array<number> = process.argv[2].replace('[', '').replace(']', '').split(',').map(hour => parseInt(hour));
 console.log(calculateExercise(listInputToNumbers, parseInt(process.argv[3])));
+*/
