@@ -12,7 +12,6 @@ const Authors = ({ show }) => {
     })
 
     const authorsResult = useQuery(ALL_AUTHORS)
-    console.log(authorsResult)
 
     if (!show) {
     return null

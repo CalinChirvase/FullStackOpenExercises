@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useQuery } from '@apollo/client'
 import { ALL_BOOKS } from '../queries'
 
 const Books = ({ show }) => {
+  const [genre, setGenre] = useState('all genres')
   
   const booksResult = useQuery(ALL_BOOKS)
 
@@ -13,7 +14,12 @@ const Books = ({ show }) => {
   return (
     <div>
       <h2>books</h2>
-
+      <p>in genre</p>
+      <input
+        type="text"
+        value={genre}
+        onChange={({ target }) => setGenre(target.value)}
+      />
       <table>
         <tbody>
           <tr>
@@ -25,13 +31,22 @@ const Books = ({ show }) => {
               published
             </th>
           </tr>
-          {booksResult.data.allBooks.map(a =>
-            <tr key={a.title}>
-              <td>{a.title}</td>
-              <td>{a.author}</td>
-              <td>{a.published}</td>
+          {genre ==='all genres'
+          ? booksResult.data.allBooks.map(b =>
+            <tr key={b.title}>
+              <td>{b.title}</td>
+              <td>{b.author.name}</td>
+              <td>{b.published}</td>
             </tr>
-          )}
+          )
+          : booksResult.data.allBooks.filter(b =>
+            b.genres.includes(genre)).map(b =>
+            <tr key={b.title}>
+              <td>{b.title}</td>
+              <td>{b.author.name}</td>
+              <td>{b.published}</td>
+            </tr>
+            )}
         </tbody>
       </table>
     </div>
